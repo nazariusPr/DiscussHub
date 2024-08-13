@@ -32,10 +32,6 @@ public class JwtService {
     return Keys.hmacShaKeyFor(keyBytes);
   }
 
-  private boolean isTokenExpired(String token) {
-    return this.extractExpiration(token).before(new Date());
-  }
-
   private Date extractExpiration(String token) {
     return this.extractClaims(token, Claims::getExpiration);
   }
@@ -55,20 +51,25 @@ public class JwtService {
     return this.extractClaims(token, Claims::getSubject);
   }
 
-  public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+  public String generateToken(
+      Map<String, Object> extraClaims, UserDetails userDetails, Long expirationTime) {
     extraClaims.put("roles", this.getAuthorities(userDetails));
 
     return Jwts.builder()
         .setClaims(extraClaims)
         .setSubject(userDetails.getUsername())
         .setIssuedAt(new Date(System.currentTimeMillis()))
-        .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+        .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
         .signWith(this.getSignInKey(), SignatureAlgorithm.HS256)
         .compact();
   }
 
-  public String generateToken(UserDetails userDetails) {
-    return this.generateToken(new HashMap<>(), userDetails);
+  public String generateToken(UserDetails userDetails, Long expirationTime) {
+    return this.generateToken(new HashMap<>(), userDetails, expirationTime);
+  }
+
+  public boolean isTokenExpired(String token) {
+    return this.extractExpiration(token).before(new Date());
   }
 
   public boolean isTokenValid(String token, UserDetails userDetails) {

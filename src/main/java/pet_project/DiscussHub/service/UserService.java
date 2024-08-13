@@ -7,7 +7,6 @@ import pet_project.DiscussHub.dto.User.UserPageDto;
 import pet_project.DiscussHub.dto.User.UserRequest;
 import pet_project.DiscussHub.dto.User.UserResponse;
 import pet_project.DiscussHub.model.User;
-import pet_project.DiscussHub.model.enums.Status;
 
 public interface UserService {
   User findUserByEmail(String email);
@@ -28,5 +27,4 @@ public interface UserService {
 
   void delete(UUID id);
 
-  void updateUserStatus(String email, Status status);
 }
