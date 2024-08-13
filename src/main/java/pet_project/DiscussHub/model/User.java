@@ -17,7 +17,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import pet_project.DiscussHub.model.enums.Status;
 
 @Data
 @NoArgsConstructor
@@ -54,14 +53,6 @@ public class User implements UserDetails {
   @NotNull
   @Column(name = "created_at")
   private LocalDateTime createdAt;
-
-  @Enumerated(EnumType.STRING)
-  @Column(name = "status")
-  private Status status;
-
-  @NotNull
-  @Column(name = "last_online")
-  private LocalDateTime lastOnline;
 
   @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
   private List<Post> posts;

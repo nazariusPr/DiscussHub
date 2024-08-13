@@ -18,7 +18,6 @@ import pet_project.DiscussHub.dto.User.UserResponse;
 import pet_project.DiscussHub.mapper.AuthenticationMapper;
 import pet_project.DiscussHub.mapper.UserMapper;
 import pet_project.DiscussHub.model.User;
-import pet_project.DiscussHub.model.enums.Status;
 import pet_project.DiscussHub.repository.UserRepository;
 import pet_project.DiscussHub.service.UserService;
 
@@ -114,11 +113,4 @@ public class UserServiceImpl implements UserService {
     this.userRepository.delete(this.findUser(id));
   }
 
-  @Override
-  public void updateUserStatus(String email, Status status) {
-    User user = this.findUserByEmail(email);
-    user.setStatus(status);
-
-    this.userRepository.save(user);
-  }
 }
