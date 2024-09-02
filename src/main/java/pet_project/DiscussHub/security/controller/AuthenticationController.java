@@ -2,6 +2,11 @@ package pet_project.DiscussHub.security.controller;
 
 import static pet_project.DiscussHub.constant.AppConstants.AUTH_LINK;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +30,18 @@ public class AuthenticationController {
     this.authenticationService = authenticationService;
   }
 
+  @Operation(summary = "Register a new user", description = "Registers a new user in the system.")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "User registered successfully",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = AuthenticationResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Bad request due to validation errors")
+      })
   @PostMapping("/register")
   public ResponseEntity<AuthenticationResponse> register(
       @RequestBody RegisterRequest request, BindingResult result, HttpServletResponse response) {
@@ -37,6 +54,20 @@ public class AuthenticationController {
     return ResponseEntity.ok(this.authenticationService.register(request, response));
   }
 
+  @Operation(
+      summary = "Authenticate a user",
+      description = "Authenticates a user and returns an authentication token.")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "User authenticated successfully",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = AuthenticationResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Bad request due to validation errors")
+      })
   @PostMapping("/authentication")
   public ResponseEntity<AuthenticationResponse> authenticate(
       @RequestBody AuthenticationRequest request,
@@ -51,6 +82,20 @@ public class AuthenticationController {
     return ResponseEntity.ok(this.authenticationService.authenticate(request, response));
   }
 
+  @Operation(
+      summary = "Refresh authentication token",
+      description = "Refreshes the authentication token using the provided refresh token.")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Token refreshed successfully",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = AuthenticationResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Bad request due to invalid refresh token")
+      })
   @GetMapping("/refresh-token")
   public ResponseEntity<AuthenticationResponse> refreshToken(
       @CookieValue(name = "refresh_token", defaultValue = "") String refreshToken) {
