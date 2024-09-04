@@ -8,7 +8,9 @@ import pet_project.DiscussHub.dto.Authentication.RegisterRequest;
 
 @Service
 public interface AuthenticationService {
-  AuthenticationResponse register(RegisterRequest request, HttpServletResponse response);
+  void register(RegisterRequest request);
+
+  AuthenticationResponse verifyEmail(String token, HttpServletResponse response);
 
   AuthenticationResponse authenticate(AuthenticationRequest request, HttpServletResponse response);
 

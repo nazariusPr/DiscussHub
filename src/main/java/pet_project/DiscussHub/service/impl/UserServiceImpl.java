@@ -113,4 +113,11 @@ public class UserServiceImpl implements UserService {
     this.userRepository.delete(this.findUser(id));
   }
 
+  @Override
+  public User updateUserVerifiedStatus(String email, boolean status) {
+    User user = this.findUserByEmail(email);
+    user.setVerified(status);
+
+    return this.userRepository.save(user);
+  }
 }

@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -33,25 +34,42 @@ public class AuthenticationController {
   @Operation(summary = "Register a new user", description = "Registers a new user in the system.")
   @ApiResponses(
       value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "User registered successfully",
-            content =
-                @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = AuthenticationResponse.class))),
+        @ApiResponse(responseCode = "204", description = "User registered successfully"),
         @ApiResponse(responseCode = "400", description = "Bad request due to validation errors")
       })
   @PostMapping("/register")
-  public ResponseEntity<AuthenticationResponse> register(
-      @RequestBody RegisterRequest request, BindingResult result, HttpServletResponse response) {
+  public ResponseEntity<Void> register(@RequestBody RegisterRequest request, BindingResult result) {
     if (result.hasErrors()) {
       log.error("**/ Bad request to register new user");
       throw new ValidationException("Bad request");
     }
 
+    this.authenticationService.register(request);
+
     log.info("**/ Register new user");
-    return ResponseEntity.ok(this.authenticationService.register(request, response));
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  @Operation(
+      summary = "Verify email",
+      description = "Verifies a user's email address using the provided verification token.")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Email verified successfully",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = AuthenticationResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Invalid or expired verification token"),
+        @ApiResponse(responseCode = "404", description = "User not found")
+      })
+  @GetMapping
+  public ResponseEntity<AuthenticationResponse> verifyEmail(
+      @RequestParam String token, HttpServletResponse response) {
+    log.info("**/ Verify user");
+    return ResponseEntity.ok(this.authenticationService.verifyEmail(token, response));
   }
 
   @Operation(

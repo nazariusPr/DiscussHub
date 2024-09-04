@@ -6,7 +6,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,13 +20,18 @@ import pet_project.DiscussHub.model.User;
 import pet_project.DiscussHub.model.enums.RoleType;
 import pet_project.DiscussHub.repository.UserRepository;
 import pet_project.DiscussHub.security.AuthenticationService;
+import pet_project.DiscussHub.service.EmailService;
 import pet_project.DiscussHub.service.RoleService;
+import pet_project.DiscussHub.service.UserService;
 
 @Service
+@RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
   private final UserRepository userRepository;
+  private final UserService userService;
   private final JwtService jwtService;
   private final RoleService roleService;
+  private final EmailService emailService;
   private final AuthenticationMapper authenticationMapper;
   private final AuthenticationManager authenticationManager;
 
@@ -36,30 +41,29 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   @Value("${security.jwt.refresh-token-expiration}")
   private Long REFRESH_TOKEN_EXPIRATION;
 
-  @Autowired
-  public AuthenticationServiceImpl(
-      UserRepository userRepository,
-      JwtService jwtService,
-      RoleService roleService,
-      AuthenticationMapper authenticationMapper,
-      AuthenticationManager authenticationManager) {
-    this.userRepository = userRepository;
-    this.jwtService = jwtService;
-    this.roleService = roleService;
-    this.authenticationMapper = authenticationMapper;
-    this.authenticationManager = authenticationManager;
-  }
+  @Value("${security.jwt.verify-token-expiration}")
+  private Long VERIFY_TOKEN_EXPIRATION;
 
   @Override
-  public AuthenticationResponse register(RegisterRequest request, HttpServletResponse response) {
+  public void register(RegisterRequest request) {
     User user = this.authenticationMapper.registerRequestToUser(request);
     user.setRoles(Set.of(this.roleService.getRole(RoleType.ROLE_USER)));
     this.userRepository.save(user);
 
+    String email = user.getEmail();
+    String verificationToken = this.jwtService.generateToken(user, this.VERIFY_TOKEN_EXPIRATION);
+    this.emailService.sendVerificationEmail(email, verificationToken);
+  }
+
+  @Override
+  public AuthenticationResponse verifyEmail(String token, HttpServletResponse response) {
+    String email = this.jwtService.extractUsername(token);
+    User user = this.userService.updateUserVerifiedStatus(email, true);
+
     String refreshToken = this.getRefreshToken(user);
     this.setRefreshTokenCookie(response, refreshToken);
-
     String jwtToken = this.jwtService.generateToken(user, this.ACCESS_TOKEN_EXPIRATION);
+
     return new AuthenticationResponse(jwtToken);
   }
 
@@ -70,6 +74,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
     User user = this.findUser(request.getEmail());
+    if (!user.isVerified()) {
+      throw new SecurityException("User is not verified!");
+    }
     String refreshToken = this.getRefreshToken(user);
     this.setRefreshTokenCookie(response, refreshToken);
 

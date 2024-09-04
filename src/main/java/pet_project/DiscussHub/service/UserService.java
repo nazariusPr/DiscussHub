@@ -27,4 +27,5 @@ public interface UserService {
 
   void delete(UUID id);
 
+  User updateUserVerifiedStatus(String email, boolean status);
 }
