@@ -54,6 +54,9 @@ public class User implements UserDetails {
   @Column(name = "created_at")
   private LocalDateTime createdAt;
 
+  @Column(name = "verified")
+  private boolean verified;
+
   @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
   private List<Post> posts;
 
