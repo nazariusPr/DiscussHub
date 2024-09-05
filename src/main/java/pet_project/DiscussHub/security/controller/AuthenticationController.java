@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ValidationException;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,8 +20,6 @@ import pet_project.DiscussHub.dto.Authentication.AuthenticationRequest;
 import pet_project.DiscussHub.dto.Authentication.AuthenticationResponse;
 import pet_project.DiscussHub.dto.Authentication.RegisterRequest;
 import pet_project.DiscussHub.security.service.AuthenticationService;
-
-import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -88,7 +87,7 @@ public class AuthenticationController {
                     schema = @Schema(implementation = AuthenticationResponse.class))),
         @ApiResponse(responseCode = "400", description = "Bad request due to validation errors")
       })
-  @PostMapping("/authentication")
+  @PostMapping
   public ResponseEntity<AuthenticationResponse> authenticate(
       @RequestBody AuthenticationRequest request,
       BindingResult result,

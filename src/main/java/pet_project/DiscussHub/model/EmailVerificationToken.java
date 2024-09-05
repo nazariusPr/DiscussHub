@@ -21,14 +21,14 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "email_verification_tokens")
 public class EmailVerificationToken {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
-    @Future
-    @Column(name = "expiration_time")
-    private LocalDateTime expirationTime;
+  @Future
+  @Column(name = "expiration_time")
+  private LocalDateTime expirationTime;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    private User user;
+  @OneToOne
+  private User user;
 }
