@@ -9,7 +9,7 @@ import pet_project.DiscussHub.mapper.PostMapper;
 import pet_project.DiscussHub.model.Post;
 import pet_project.DiscussHub.model.User;
 import pet_project.DiscussHub.repository.PostRepository;
-import pet_project.DiscussHub.security.service.JwtService;
+import pet_project.DiscussHub.security.service.impl.JwtService;
 import pet_project.DiscussHub.service.PostService;
 import pet_project.DiscussHub.service.UserService;
 

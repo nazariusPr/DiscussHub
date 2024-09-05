@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import pet_project.DiscussHub.dto.Authentication.AuthenticationRequest;
 import pet_project.DiscussHub.dto.Authentication.AuthenticationResponse;
 import pet_project.DiscussHub.dto.Authentication.RegisterRequest;
-import pet_project.DiscussHub.security.AuthenticationService;
+import pet_project.DiscussHub.security.service.AuthenticationService;
+
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -67,7 +69,7 @@ public class AuthenticationController {
       })
   @GetMapping
   public ResponseEntity<AuthenticationResponse> verifyEmail(
-      @RequestParam String token, HttpServletResponse response) {
+      @RequestParam UUID token, HttpServletResponse response) {
     log.info("**/ Verify user");
     return ResponseEntity.ok(this.authenticationService.verifyEmail(token, response));
   }

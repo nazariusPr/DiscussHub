@@ -1,4 +1,4 @@
-package pet_project.DiscussHub.security.service;
+package pet_project.DiscussHub.security.service.impl;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
