@@ -1,5 +1,7 @@
 package pet_project.DiscussHub.security.service.impl;
 
+import static pet_project.DiscussHub.constant.ErrorConstants.INVALID_TOKEN_MESSAGE;
+
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -37,7 +39,7 @@ public class EmailVerificationTokenServiceImpl implements EmailVerificationToken
     LocalDateTime expirationTime = verificationToken.getExpirationTime();
 
     if (expirationTime.isBefore(LocalDateTime.now())) {
-      throw new TokenExpirationException("Invalid token");
+      throw new TokenExpirationException(INVALID_TOKEN_MESSAGE);
     }
 
     String email = verificationToken.getUser().getEmail();
@@ -55,6 +57,6 @@ public class EmailVerificationTokenServiceImpl implements EmailVerificationToken
   private EmailVerificationToken find(UUID tokenId) {
     return this.repository
         .findById(tokenId)
-        .orElseThrow(() -> new EntityNotFoundException("Invalid token"));
+        .orElseThrow(() -> new EntityNotFoundException(INVALID_TOKEN_MESSAGE));
   }
 }

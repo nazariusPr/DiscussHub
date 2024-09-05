@@ -1,12 +1,11 @@
 package pet_project.DiscussHub.model;
 
 import jakarta.persistence.*;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pet_project.DiscussHub.model.enums.ReactionType;
-
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor

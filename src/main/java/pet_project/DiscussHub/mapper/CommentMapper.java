@@ -1,5 +1,6 @@
 package pet_project.DiscussHub.mapper;
 
+import java.util.UUID;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -11,8 +12,6 @@ import pet_project.DiscussHub.dto.Comment.CommentResponse;
 import pet_project.DiscussHub.model.Comment;
 import pet_project.DiscussHub.model.Post;
 import pet_project.DiscussHub.service.PostService;
-
-import java.util.UUID;
 
 @Mapper(componentModel = "spring")
 public abstract class CommentMapper {

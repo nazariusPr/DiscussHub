@@ -1,18 +1,19 @@
 package pet_project.DiscussHub.service.impl;
 
+import static pet_project.DiscussHub.constant.ErrorConstants.ENTITY_NOT_FOUND_MESSAGE;
 import static pet_project.DiscussHub.utils.ValidationUtils.validateRequest;
 
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pet_project.DiscussHub.dto.Authentication.RegisterRequest;
-import pet_project.DiscussHub.dto.User.UserPageDto;
+import pet_project.DiscussHub.dto.Page.PageDto;
 import pet_project.DiscussHub.dto.User.UserRequest;
 import pet_project.DiscussHub.dto.User.UserResponse;
 import pet_project.DiscussHub.mapper.AuthenticationMapper;
@@ -22,23 +23,17 @@ import pet_project.DiscussHub.repository.UserRepository;
 import pet_project.DiscussHub.service.UserService;
 
 @Service
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final UserMapper userMapper;
   private final AuthenticationMapper authMapper;
 
-  @Autowired
-  public UserServiceImpl(
-      UserRepository userRepository, UserMapper userMapper, AuthenticationMapper authMapper) {
-    this.userRepository = userRepository;
-    this.userMapper = userMapper;
-    this.authMapper = authMapper;
-  }
-
   private User findUser(UUID id) {
     return this.userRepository
         .findById(id)
-        .orElseThrow(() -> new EntityNotFoundException("User with id = " + id + " was not found!"));
+        .orElseThrow(
+            () -> new EntityNotFoundException(String.format(ENTITY_NOT_FOUND_MESSAGE, id)));
   }
 
   @Override
@@ -46,7 +41,7 @@ public class UserServiceImpl implements UserService {
     return this.userRepository
         .findByEmail(email)
         .orElseThrow(
-            () -> new EntityNotFoundException("User with email = " + email + " was not found!"));
+            () -> new EntityNotFoundException(String.format(ENTITY_NOT_FOUND_MESSAGE, email)));
   }
 
   @Override
@@ -65,11 +60,11 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserPageDto readPage(int page, int size) {
+  public PageDto<UserResponse> readPage(int page, int size) {
     Pageable pageable = PageRequest.of(page, size);
     Page<User> users = this.userRepository.findAll(pageable);
 
-    return new UserPageDto(
+    return new PageDto<>(
         users.getContent().stream()
             .map(this.userMapper::userToUserResponse)
             .collect(Collectors.toList()),

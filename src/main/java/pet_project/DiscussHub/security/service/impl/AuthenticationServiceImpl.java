@@ -1,6 +1,9 @@
 package pet_project.DiscussHub.security.service.impl;
 
 import static pet_project.DiscussHub.constant.AppConstants.AUTH_LINK;
+import static pet_project.DiscussHub.constant.ErrorConstants.ENTITY_NOT_FOUND_MESSAGE;
+import static pet_project.DiscussHub.constant.ErrorConstants.INVALID_TOKEN_MESSAGE;
+import static pet_project.DiscussHub.constant.ErrorConstants.USER_NOT_VERIFIED_MESSAGE;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.Cookie;
@@ -77,7 +80,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     User user = this.findUser(request.getEmail());
     if (!user.isVerified()) {
-      throw new SecurityException("User is not verified!");
+      throw new SecurityException(USER_NOT_VERIFIED_MESSAGE);
     }
     String refreshToken = this.getRefreshToken(user);
     this.setRefreshTokenCookie(response, refreshToken);
@@ -89,7 +92,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   @Override
   public AuthenticationResponse refreshToken(String refreshToken) {
     if (refreshToken.isEmpty() || this.jwtService.isTokenExpired(refreshToken)) {
-      throw new InvalidTokenException("Refresh token is expired!");
+      throw new InvalidTokenException(INVALID_TOKEN_MESSAGE);
     }
     String email = this.jwtService.extractUsername(refreshToken);
     User user = this.findUser(email);
@@ -116,6 +119,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     return this.userRepository
         .findByEmail(email)
         .orElseThrow(
-            () -> new EntityNotFoundException("User with email = " + email + " was not found!"));
+            () -> new EntityNotFoundException(String.format(ENTITY_NOT_FOUND_MESSAGE, email)));
   }
 }

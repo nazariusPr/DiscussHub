@@ -1,5 +1,7 @@
 package pet_project.DiscussHub.mapper;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -10,9 +12,6 @@ import pet_project.DiscussHub.dto.Post.PostResponse;
 import pet_project.DiscussHub.model.Category;
 import pet_project.DiscussHub.model.Post;
 import pet_project.DiscussHub.service.CategoryService;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public abstract class PostMapper {

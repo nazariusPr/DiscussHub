@@ -9,6 +9,8 @@ import jakarta.validation.ValidationException;
 import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
+
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,21 +26,19 @@ import pet_project.DiscussHub.service.UserService;
 
 @Slf4j
 @RestController
+@AllArgsConstructor
 @RequestMapping(USER_LINK)
 public class UserController {
   private final UserService userService;
 
-  @Autowired
-  public UserController(UserService userService) {
-    this.userService = userService;
-  }
-
   @PostMapping
-  @Operation(summary = "Create a new user", description = "Registers a new user with the provided details.")
+  @Operation(
+      summary = "Create a new user",
+      description = "Registers a new user with the provided details.")
   @ApiResponse(responseCode = "201", description = "User created successfully")
   @ApiResponse(responseCode = "400", description = "Invalid input")
   public ResponseEntity<UserResponse> createUser(
-          @Validated @RequestBody RegisterRequest request, BindingResult result) {
+      @Validated @RequestBody RegisterRequest request, BindingResult result) {
     if (result.hasErrors()) {
       throw new ValidationException("Invalid request to create new user");
     }
@@ -65,7 +65,8 @@ public class UserController {
   @ApiResponse(responseCode = "200", description = "Successfully retrieved the user")
   @ApiResponse(responseCode = "404", description = "User not found")
   public ResponseEntity<UserResponse> getById(
-          @Parameter(description = "ID of the user to be retrieved") @PathVariable(name = "id") UUID id) {
+      @Parameter(description = "ID of the user to be retrieved") @PathVariable(name = "id")
+          UUID id) {
     UserResponse response = this.userService.readById(id);
 
     log.info("**/ Getting user by id = " + id);
@@ -73,11 +74,15 @@ public class UserController {
   }
 
   @GetMapping
-  @Operation(summary = "Get user by email", description = "Retrieves user details by their email address.")
+  @Operation(
+      summary = "Get user by email",
+      description = "Retrieves user details by their email address.")
   @ApiResponse(responseCode = "200", description = "Successfully retrieved the user")
   @ApiResponse(responseCode = "404", description = "User not found")
   public ResponseEntity<UserResponse> getByEmail(
-          @Parameter(description = "Email address of the user to be retrieved") @RequestParam(name = "email") String email) {
+      @Parameter(description = "Email address of the user to be retrieved")
+          @RequestParam(name = "email")
+          String email) {
     UserResponse response = this.userService.readByEmail(email);
 
     log.info("**/ Getting user by email = " + email);
@@ -86,14 +91,16 @@ public class UserController {
 
   @PreAuthorize("@securityUtils.hasAccess(#id, authentication) or hasRole('ROLE_ADMIN')")
   @PutMapping("/{id}")
-  @Operation(summary = "Update user by ID", description = "Updates user details by their unique ID.")
+  @Operation(
+      summary = "Update user by ID",
+      description = "Updates user details by their unique ID.")
   @ApiResponse(responseCode = "200", description = "Successfully updated the user")
   @ApiResponse(responseCode = "400", description = "Invalid input")
   @ApiResponse(responseCode = "404", description = "User not found")
   public ResponseEntity<UserResponse> updateUser(
-          @Parameter(description = "ID of the user to be updated") @PathVariable(name = "id") UUID id,
-          @Validated @RequestBody UserRequest request,
-          BindingResult result) {
+      @Parameter(description = "ID of the user to be updated") @PathVariable(name = "id") UUID id,
+      @Validated @RequestBody UserRequest request,
+      BindingResult result) {
     if (result.hasErrors()) {
       throw new ValidationException("Invalid request to update user");
     }
@@ -105,11 +112,13 @@ public class UserController {
   }
 
   @PutMapping
-  @Operation(summary = "Update current user", description = "Updates the details of the currently authenticated user.")
+  @Operation(
+      summary = "Update current user",
+      description = "Updates the details of the currently authenticated user.")
   @ApiResponse(responseCode = "200", description = "Successfully updated the user")
   @ApiResponse(responseCode = "400", description = "Invalid input")
   public ResponseEntity<UserResponse> updateUser(
-          @Validated @RequestBody UserRequest request, BindingResult result, Principal principal) {
+      @Validated @RequestBody UserRequest request, BindingResult result, Principal principal) {
     if (result.hasErrors()) {
       throw new ValidationException("Invalid request to update user");
     }
@@ -126,7 +135,7 @@ public class UserController {
   @ApiResponse(responseCode = "204", description = "Successfully deleted the user")
   @ApiResponse(responseCode = "404", description = "User not found")
   public ResponseEntity<Void> deleteUser(
-          @Parameter(description = "ID of the user to be deleted") @PathVariable(name = "id") UUID id) {
+      @Parameter(description = "ID of the user to be deleted") @PathVariable(name = "id") UUID id) {
     this.userService.delete(id);
 
     log.info("**/ Deleting user by id = " + id);

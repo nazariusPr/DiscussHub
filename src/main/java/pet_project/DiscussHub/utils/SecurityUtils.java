@@ -1,7 +1,7 @@
 package pet_project.DiscussHub.utils;
 
 import java.util.UUID;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -10,13 +10,9 @@ import pet_project.DiscussHub.model.User;
 import pet_project.DiscussHub.service.PostService;
 
 @Service("securityUtils")
+@AllArgsConstructor
 public class SecurityUtils {
   private final PostService postService;
-
-  @Autowired
-  public SecurityUtils(PostService postService) {
-    this.postService = postService;
-  }
 
   private UUID currentUserID(Authentication authentication) {
     if (authentication != null

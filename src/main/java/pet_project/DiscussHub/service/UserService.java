@@ -3,7 +3,7 @@ package pet_project.DiscussHub.service;
 import java.util.List;
 import java.util.UUID;
 import pet_project.DiscussHub.dto.Authentication.RegisterRequest;
-import pet_project.DiscussHub.dto.User.UserPageDto;
+import pet_project.DiscussHub.dto.Page.PageDto;
 import pet_project.DiscussHub.dto.User.UserRequest;
 import pet_project.DiscussHub.dto.User.UserResponse;
 import pet_project.DiscussHub.model.User;
@@ -15,7 +15,7 @@ public interface UserService {
 
   List<UserResponse> readAll();
 
-  UserPageDto readPage(int page, int size);
+  PageDto<UserResponse> readPage(int page, int size);
 
   UserResponse readById(UUID id);
 

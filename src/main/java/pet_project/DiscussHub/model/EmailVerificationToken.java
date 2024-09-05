@@ -29,6 +29,5 @@ public class EmailVerificationToken {
   @Column(name = "expiration_time")
   private LocalDateTime expirationTime;
 
-  @OneToOne
-  private User user;
+  @OneToOne private User user;
 }

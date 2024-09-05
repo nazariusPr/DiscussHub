@@ -1,11 +1,10 @@
 package pet_project.DiscussHub.service;
 
+import java.util.List;
+import java.util.UUID;
 import pet_project.DiscussHub.dto.Post.PostRequest;
 import pet_project.DiscussHub.dto.Post.PostResponse;
 import pet_project.DiscussHub.model.Post;
-
-import java.util.List;
-import java.util.UUID;
 
 public interface PostService {
   Post findPost(UUID id);

@@ -5,7 +5,6 @@ import org.mapstruct.MappingTarget;
 import pet_project.DiscussHub.dto.Category.CategoryRequest;
 import pet_project.DiscussHub.dto.Category.CategoryResponse;
 import pet_project.DiscussHub.model.Category;
-import pet_project.DiscussHub.model.User;
 
 @Mapper(componentModel = "spring")
 public interface CategoryMapper {

@@ -3,6 +3,7 @@ package pet_project.DiscussHub.config;
 import static pet_project.DiscussHub.constant.AppConstants.AUTH_LINK;
 import static pet_project.DiscussHub.constant.AppConstants.USER_LINK;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,20 +19,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import pet_project.DiscussHub.security.filter.JwtAuthenticationFilter;
 
 @Configuration
+@AllArgsConstructor
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
   private final JwtAuthenticationFilter authenticationFilter;
   private final AuthenticationProvider authenticationProvider;
-
-  @Autowired
-  public SecurityConfig(
-      JwtAuthenticationFilter jwtAuthenticationFilter,
-      AuthenticationProvider authenticationProvider) {
-    this.authenticationFilter = jwtAuthenticationFilter;
-    this.authenticationProvider = authenticationProvider;
-  }
-
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.csrf(AbstractHttpConfigurer::disable)

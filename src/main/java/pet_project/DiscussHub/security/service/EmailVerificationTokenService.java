@@ -11,5 +11,4 @@ public interface EmailVerificationTokenService {
   String validate(UUID tokenId);
 
   void delete(UUID tokenId);
-
 }

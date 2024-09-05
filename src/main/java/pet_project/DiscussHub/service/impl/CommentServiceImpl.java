@@ -1,7 +1,13 @@
 package pet_project.DiscussHub.service.impl;
 
+import static pet_project.DiscussHub.constant.ErrorConstants.ENTITY_NOT_FOUND_MESSAGE;
+import static pet_project.DiscussHub.utils.ValidationUtils.validateRequest;
+
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import pet_project.DiscussHub.dto.Comment.CommentRequestCreate;
 import pet_project.DiscussHub.dto.Comment.CommentRequestUpdate;
@@ -11,29 +17,18 @@ import pet_project.DiscussHub.model.Comment;
 import pet_project.DiscussHub.repository.CommentRepository;
 import pet_project.DiscussHub.service.CommentService;
 
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import static pet_project.DiscussHub.utils.ValidationUtils.validateRequest;
-
 @Service
+@AllArgsConstructor
 public class CommentServiceImpl implements CommentService {
   private final CommentRepository commentRepository;
   private final CommentMapper commentMapper;
-
-  @Autowired
-  public CommentServiceImpl(CommentRepository commentRepository, CommentMapper commentMapper) {
-    this.commentRepository = commentRepository;
-    this.commentMapper = commentMapper;
-  }
 
   @Override
   public Comment findComment(UUID id) {
     return this.commentRepository
         .findById(id)
         .orElseThrow(
-            () -> new EntityNotFoundException("Comment with such id = " + id + "was not found!"));
+            () -> new EntityNotFoundException(String.format(ENTITY_NOT_FOUND_MESSAGE, id)));
   }
 
   @Override

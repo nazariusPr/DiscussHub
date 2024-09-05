@@ -10,8 +10,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ValidationException;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -22,15 +22,11 @@ import pet_project.DiscussHub.dto.Authentication.RegisterRequest;
 import pet_project.DiscussHub.security.service.AuthenticationService;
 
 @Slf4j
+@AllArgsConstructor
 @RestController
 @RequestMapping(AUTH_LINK)
 public class AuthenticationController {
   private final AuthenticationService authenticationService;
-
-  @Autowired
-  public AuthenticationController(AuthenticationService authenticationService) {
-    this.authenticationService = authenticationService;
-  }
 
   @Operation(summary = "Register a new user", description = "Registers a new user in the system.")
   @ApiResponses(

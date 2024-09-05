@@ -15,9 +15,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UserResponse {
-    private UUID id;
-    private String nickname;
-    private String email;
-    private String avatar;
-    private String bio;
+  private UUID id;
+  private String nickname;
+  private String email;
+  private String avatar;
+  private String bio;
 }

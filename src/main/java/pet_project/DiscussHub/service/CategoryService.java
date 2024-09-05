@@ -1,11 +1,10 @@
 package pet_project.DiscussHub.service;
 
+import java.util.List;
+import java.util.UUID;
 import pet_project.DiscussHub.dto.Category.CategoryRequest;
 import pet_project.DiscussHub.dto.Category.CategoryResponse;
 import pet_project.DiscussHub.model.Category;
-
-import java.util.List;
-import java.util.UUID;
 
 public interface CategoryService {
   Category findCategory(String name);

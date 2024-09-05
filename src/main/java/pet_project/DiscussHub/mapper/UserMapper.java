@@ -2,7 +2,6 @@ package pet_project.DiscussHub.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
-import pet_project.DiscussHub.dto.Authentication.RegisterRequest;
 import pet_project.DiscussHub.dto.User.UserRequest;
 import pet_project.DiscussHub.dto.User.UserResponse;
 import pet_project.DiscussHub.model.User;
