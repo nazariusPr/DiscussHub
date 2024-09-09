@@ -1,12 +1,20 @@
 package pet_project.DiscussHub.service.impl;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import java.util.Map;
 import lombok.AllArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+import pet_project.DiscussHub.constant.EmailConstants;
 import pet_project.DiscussHub.service.EmailService;
+import pet_project.DiscussHub.utils.ClientHelper;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class EmailServiceImpl implements EmailService {
@@ -15,15 +23,33 @@ public class EmailServiceImpl implements EmailService {
 
   @Override
   public void sendVerificationEmail(String to, String verificationToken) {
-    SimpleMailMessage message = new SimpleMailMessage();
-    message.setTo(to);
-    message.setSubject("Email Verification");
-    message.setText(verificationToken);
+    String verificationUrl = ClientHelper.getVerificationUrl(verificationToken);
 
-    mailSender.send(message);
+    Map<String, Object> variables = Map.of("verificationUrl", verificationUrl);
+
+    String emailContent = createEmailTemplate(variables, EmailConstants.VERIFY_EMAIL_TEMPLATE_NAME);
+    sendEmail(to, "Email Verification", emailContent);
   }
 
-  private String createEmailTemplate(){
-    return null;
+  private void sendEmail(String to, String subject, String content) {
+    MimeMessage mimeMessage = mailSender.createMimeMessage();
+    MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
+
+    try {
+      helper.setTo(to);
+      helper.setSubject(subject);
+      helper.setText(content, true);
+    } catch (MessagingException e) {
+      log.error(e.getMessage());
+    }
+
+    mailSender.send(mimeMessage);
+  }
+
+  private String createEmailTemplate(Map<String, Object> vars, String templateName) {
+    Context context = new Context();
+    context.setVariables(vars);
+
+    return templateEngine.process(templateName, context);
   }
 }

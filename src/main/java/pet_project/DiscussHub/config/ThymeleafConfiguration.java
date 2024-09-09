@@ -20,7 +20,7 @@ public class ThymeleafConfiguration {
 
   @Bean
   public SpringTemplateEngine templateEngine() {
-    var templateEngine = new SpringTemplateEngine();
+    SpringTemplateEngine templateEngine = new SpringTemplateEngine();
     templateEngine.setTemplateResolver(templateResolver());
 
     return templateEngine;
