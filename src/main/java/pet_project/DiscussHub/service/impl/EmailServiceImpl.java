@@ -4,12 +4,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
 import pet_project.DiscussHub.service.EmailService;
 
 @Service
 @AllArgsConstructor
 public class EmailServiceImpl implements EmailService {
   private JavaMailSender mailSender;
+  private TemplateEngine templateEngine;
 
   @Override
   public void sendVerificationEmail(String to, String verificationToken) {
@@ -19,5 +21,9 @@ public class EmailServiceImpl implements EmailService {
     message.setText(verificationToken);
 
     mailSender.send(message);
+  }
+
+  private String createEmailTemplate(){
+    return null;
   }
 }
