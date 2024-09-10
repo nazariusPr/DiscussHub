@@ -22,7 +22,9 @@ public class ImageServiceImpl implements ImageService {
 
   @Override
   public String uploadImage(MultipartFile image) {
+    validateImageFile(image);
     String fileName = UUID.randomUUID().toString();
+
     try {
       ObjectMetadata metadata = new ObjectMetadata();
       metadata.setContentType(image.getContentType());
@@ -50,6 +52,13 @@ public class ImageServiceImpl implements ImageService {
       s3Client.deleteObject(deleteObjectRequest);
     } catch (Exception e) {
       System.err.println("Error deleting the image: " + e.getMessage());
+    }
+  }
+
+  private void validateImageFile(MultipartFile image) {
+    String fileType = image.getContentType();
+    if (fileType == null || !fileType.startsWith("image/")) {
+      throw new IllegalArgumentException("Only image files are allowed.");
     }
   }
 }
