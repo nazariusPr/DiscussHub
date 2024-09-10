@@ -2,11 +2,9 @@ package pet_project.DiscussHub.service.impl;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,9 +22,18 @@ public class ImageServiceImpl implements ImageService {
 
   @Override
   public String uploadImage(MultipartFile image) {
-    File file = convertMultiPartFileToFile(image);
-    String fileName = uploadFileToS3Bucket(file);
-    file.deleteOnExit();
+    String fileName = UUID.randomUUID().toString();
+    try {
+      ObjectMetadata metadata = new ObjectMetadata();
+      metadata.setContentType(image.getContentType());
+      metadata.setContentLength(image.getSize());
+
+      PutObjectRequest putObjectRequest =
+          new PutObjectRequest(bucketName, fileName, image.getInputStream(), metadata);
+      s3Client.putObject(putObjectRequest);
+    } catch (IOException e) {
+      System.err.println("Error while uploading file to S3: " + e.getMessage());
+    }
 
     return fileName;
   }
@@ -44,26 +51,5 @@ public class ImageServiceImpl implements ImageService {
     } catch (Exception e) {
       System.err.println("Error deleting the image: " + e.getMessage());
     }
-  }
-
-  private File convertMultiPartFileToFile(MultipartFile multipartFile) {
-
-    final File file = new File(Objects.requireNonNull(multipartFile.getOriginalFilename()));
-
-    try (FileOutputStream outputStream = new FileOutputStream(file)) {
-      outputStream.write(multipartFile.getBytes());
-    } catch (final IOException ex) {
-      System.out.println("Error converting the multi-part file to file= " + ex.getMessage());
-    }
-
-    return file;
-  }
-
-  private String uploadFileToS3Bucket(File file) {
-    String fileName = UUID.randomUUID() + file.getName();
-    PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, fileName, file);
-    s3Client.putObject(putObjectRequest);
-
-    return fileName;
   }
 }
