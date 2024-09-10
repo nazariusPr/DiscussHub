@@ -1,5 +1,9 @@
 package pet_project.DiscussHub.service.impl;
 
+import static pet_project.DiscussHub.constant.ErrorConstants.FILE_DELETING_ERROR_MESSAGE;
+import static pet_project.DiscussHub.constant.ErrorConstants.FILE_UPLOADING_ERROR_MESSAGE;
+import static pet_project.DiscussHub.constant.ErrorConstants.IMAGE_TYPE_RESTRICTION_MESSAGE;
+
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -34,7 +38,7 @@ public class ImageServiceImpl implements ImageService {
           new PutObjectRequest(bucketName, fileName, image.getInputStream(), metadata);
       s3Client.putObject(putObjectRequest);
     } catch (IOException e) {
-      System.err.println("Error while uploading file to S3: " + e.getMessage());
+      System.err.println(FILE_UPLOADING_ERROR_MESSAGE);
     }
 
     return fileName;
@@ -51,14 +55,14 @@ public class ImageServiceImpl implements ImageService {
       DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucketName, fileName);
       s3Client.deleteObject(deleteObjectRequest);
     } catch (Exception e) {
-      System.err.println("Error deleting the image: " + e.getMessage());
+      System.err.println(FILE_DELETING_ERROR_MESSAGE);
     }
   }
 
   private void validateImageFile(MultipartFile image) {
     String fileType = image.getContentType();
     if (fileType == null || !fileType.startsWith("image/")) {
-      throw new IllegalArgumentException("Only image files are allowed.");
+      throw new IllegalArgumentException(IMAGE_TYPE_RESTRICTION_MESSAGE);
     }
   }
 }
