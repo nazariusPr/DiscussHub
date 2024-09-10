@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import pet_project.DiscussHub.dto.Authentication.RegisterRequest;
 import pet_project.DiscussHub.dto.Page.PageDto;
 import pet_project.DiscussHub.dto.User.UserRequest;
@@ -20,21 +21,16 @@ import pet_project.DiscussHub.mapper.AuthenticationMapper;
 import pet_project.DiscussHub.mapper.UserMapper;
 import pet_project.DiscussHub.model.User;
 import pet_project.DiscussHub.repository.UserRepository;
+import pet_project.DiscussHub.service.ImageService;
 import pet_project.DiscussHub.service.UserService;
 
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
+  private final ImageService imageService;
   private final UserRepository userRepository;
   private final UserMapper userMapper;
   private final AuthenticationMapper authMapper;
-
-  private User findUser(UUID id) {
-    return this.userRepository
-        .findById(id)
-        .orElseThrow(
-            () -> new EntityNotFoundException(String.format(ENTITY_NOT_FOUND_MESSAGE, id)));
-  }
 
   @Override
   public User findUserByEmail(String email) {
@@ -114,5 +110,40 @@ public class UserServiceImpl implements UserService {
     user.setVerified(status);
 
     return this.userRepository.save(user);
+  }
+
+  @Override
+  public String uploadUserProfileImage(String email, MultipartFile image) {
+    User user = this.findUserByEmail(email);
+    String currentProfileImage = user.getAvatar();
+    this.deleteImage(currentProfileImage);
+
+    String fileName = this.imageService.uploadImage(image);
+    user.setAvatar(fileName);
+
+    this.userRepository.save(user);
+    return this.imageService.buildImageUrl(fileName);
+  }
+
+  @Override
+  public void deleteUserProfileImage(String email) {
+    User user = this.findUserByEmail(email);
+    this.deleteImage(user.getAvatar());
+
+    user.setAvatar(null);
+    this.userRepository.save(user);
+  }
+
+  private User findUser(UUID id) {
+    return this.userRepository
+        .findById(id)
+        .orElseThrow(
+            () -> new EntityNotFoundException(String.format(ENTITY_NOT_FOUND_MESSAGE, id)));
+  }
+
+  private void deleteImage(String fileName) {
+    if (fileName != null && !fileName.isEmpty()) {
+      this.imageService.deleteImage(fileName);
+    }
   }
 }
