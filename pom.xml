@@ -148,9 +148,15 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-aws</artifactId>
+            <version>2.2.6.RELEASE</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk</artifactId>
-            <version>1.12.771</version>
+            <artifactId>aws-java-sdk-s3</artifactId>
+            <version>1.12.667</version>
         </dependency>
     </dependencies>
 

@@ -9,16 +9,15 @@ import jakarta.validation.ValidationException;
 import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import pet_project.DiscussHub.dto.Authentication.RegisterRequest;
 import pet_project.DiscussHub.dto.User.UserRequest;
 import pet_project.DiscussHub.dto.User.UserResponse;
@@ -139,6 +138,35 @@ public class UserController {
     this.userService.delete(id);
 
     log.info("**/ Deleting user by id = " + id);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  @PostMapping("/upload-image")
+  @Operation(
+      summary = "Upload a profile image",
+      description = "Uploads a new profile image for the user specified by their email address.")
+  @ApiResponse(responseCode = "200", description = "Image uploaded successfully")
+  @ApiResponse(responseCode = "400", description = "Invalid input")
+  @ApiResponse(responseCode = "403", description = "User does not have permission for this action")
+  public ResponseEntity<String> uploadProfileImage(
+      @RequestParam(name = "image") MultipartFile image, Principal principal) {
+
+    String imageUrl = this.userService.uploadUserProfileImage(principal.getName(), image);
+
+    log.info("**/ Uploaded profile image for user with email = " + principal.getName());
+    return ResponseEntity.ok(imageUrl);
+  }
+
+  @DeleteMapping("/profile-image")
+  @Operation(
+      summary = "Delete profile image",
+      description = "Deletes the profile image of the currently authenticated user.")
+  @ApiResponse(responseCode = "204", description = "Profile image deleted successfully")
+  @ApiResponse(responseCode = "403", description = "User does not have permission for this action")
+  public ResponseEntity<Void> deleteProfileImage(Principal principal) {
+    this.userService.deleteUserProfileImage(principal.getName());
+
+    log.info("**/ Deleted profile image for user with email = " + principal.getName());
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 }
